@@ -1,3 +1,5 @@
+import { User } from "../../auth/interfaces/user.interfaces";
+
 export interface ProductResponse {
   count:    number;
   pages:    number;
