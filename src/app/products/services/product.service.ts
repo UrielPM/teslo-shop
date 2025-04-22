@@ -22,7 +22,7 @@ export class ProductService {
 
   getProduct(options: Options): Observable<ProductResponse> {
 
-    const { limit = 9, offset = 0, gender = '' } = options;
+    const { limit = 8, offset = 0, gender = '' } = options;
 
     return this.http
     .get<ProductResponse>(`${baseUrl}/products`, {
