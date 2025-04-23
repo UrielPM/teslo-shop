@@ -1,10 +1,10 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ProductCardComponent } from "../../../products/components/product-card/product-card.component";
 import { ProductService } from '../../../products/services/product.service';
-import { rxResource, toSignal } from '@angular/core/rxjs-interop';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { PaginationComponent } from "../../../shared/components/pagination/pagination.component";
-import { ActivatedRoute } from '@angular/router';
-import { map } from 'rxjs';
+import { PaginationService } from '../../../shared/components/pagination/pagination.service';
+
 
 @Component({
   selector: 'app-home-page',
@@ -14,7 +14,8 @@ import { map } from 'rxjs';
 export class HomePageComponent {
 
 ProductService = inject(ProductService);
-
+paginationServices = inject(PaginationService);
+/*
 activateRoute = inject(ActivatedRoute);
 
 currentPage = toSignal(
@@ -27,9 +28,9 @@ currentPage = toSignal(
     initialValue: 1,
   }
 );
-
+*/
 productResource = rxResource({
-  request: () => ({ page: this.currentPage() - 1}),
+  request: () => ({ page: this.paginationServices.currentPage() - 1}),
   loader:({ request}) => {
     return this.ProductService.getProduct({
       offset: request.page * 8
