@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { FormBuilder,ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login-page',
@@ -8,18 +9,19 @@ import { FormBuilder,ReactiveFormsModule, Validators } from '@angular/forms';
   templateUrl: './login-page.component.html',
 })
 export class LoginPageComponent {
+  fb = inject(FormBuilder);
+  hasError = signal(false);
+  isPosting = signal(false);
 
-  fb = inject(FormBuilder)
-  hasError = signal(false)
-  isPosting = signal(false)
+  authService = inject(AuthService);
 
   loginForm = this.fb.group({
-    email: ['', [ Validators.required, Validators.email]],
-    password: ['', [ Validators.required, Validators.minLength(6)]],
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required, Validators.minLength(6)]],
   });
 
-  onSubmit(){
-    if( this.loginForm.invalid){
+  onSubmit() {
+    if (this.loginForm.invalid) {
       this.hasError.set(true);
       setTimeout(() => {
         this.hasError.set(false);
@@ -27,9 +29,10 @@ export class LoginPageComponent {
       return;
     }
 
-  const{ email = '', password = ''} = this.loginForm.value;
+    const { email = '', password = '' } = this.loginForm.value;
 
-    console.log( {email, password});
-
+    this.authService.login(email!, password!).subscribe((resp) => {
+      console.log(resp);
+    });
   }
 }
