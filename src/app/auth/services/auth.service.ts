@@ -40,20 +40,8 @@ export class AuthService {
       email: email,
       password: password,
     }).pipe(
-      tap( resp => {
-        this._user.set(resp.user);
-        this._authStatus.set('authenticated');
-        this._token.set(resp.token);
-
-        localStorage.setItem('token', resp.token);
-      }),
-      map(() => true),
-      catchError((eror: any) => {
-        this._user.set(null);
-        this._token.set(null);
-        this._authStatus.set('not-authenticated');
-          return of(false);
-      })
+      map( resp => this.handleAuthSuccess(resp)),
+      catchError((error: any) => this.handleAuthError(error))
     );
   }
 
@@ -61,6 +49,7 @@ export class AuthService {
 
     const token = localStorage.getItem('token');
       if( !token){
+        this.logout();
         return of(false)
       }
       return this.http.get<AuthResponse>(`${baseUrl}/auth/check-status`, {
@@ -68,21 +57,33 @@ export class AuthService {
           Authorization: `Bearer ${token}`
         },
       }).pipe(
-        tap( resp => {
-          this._user.set(resp.user);
-          this._authStatus.set('authenticated');
-          this._token.set(resp.token);
-
-          localStorage.setItem('token', resp.token);
-        }),
+        tap((resp) => this.handleAuthSuccess(resp)),
         map(() => true),
-        catchError((eror: any) => {
-          this._user.set(null);
-          this._token.set(null);
-          this._authStatus.set('not-authenticated');
-            return of(false);
-        })
+        catchError((error: any) => this.handleAuthError(error))
       );
 
   }
+  logout(){
+    this._user.set(null);
+    this._token.set(null);
+    this._authStatus.set('not-authenticated');
+
+    localStorage.removeItem('token');
+  }
+
+  private handleAuthSuccess( {token, user}: AuthResponse){
+    this._user.set(user);
+    this._authStatus.set('authenticated');
+    this._token.set(token);
+    localStorage.setItem('token',token);
+
+    return true;
+  }
+
+  private handleAuthError( error: any){
+    this.logout();
+    return of(false);
+  }
+
+
 }
