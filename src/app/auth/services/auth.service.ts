@@ -67,8 +67,7 @@ export class AuthService {
     this._user.set(null);
     this._token.set(null);
     this._authStatus.set('not-authenticated');
-
-    //localStorage.removeItem('token');
+    localStorage.removeItem('token');
   }
 
   private handleAuthSuccess( {token, user}: AuthResponse){
