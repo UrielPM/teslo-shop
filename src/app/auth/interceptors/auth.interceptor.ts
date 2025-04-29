@@ -9,7 +9,7 @@ export function authInterceptor(
 
   const token = inject(AuthService).token();
 
-  console.log({ token });
+ // console.log({ token });
 
   const newReq = req.clone({
     headers: req.headers.append('Authorization', `Bearer ${token}`),
