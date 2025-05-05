@@ -59,4 +59,11 @@ export class ProductService {
       .get<Product>(`${baseUrl}/products/${id}`)
       .pipe(tap((product) => this.productCache.set(id, product)));
   }
+
+  updateProduct(
+    id: string,
+    productLike: Partial<Product>
+   ): Observable<Product> {
+    return this.http.patch<Product>(`${baseUrl}/products/${id}`,productLike);
+  }
 }
