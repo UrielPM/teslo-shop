@@ -5,6 +5,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormUtils } from '../../../../utils/form-utils';
 import { FormErrorLabelComponent } from '../../../../shared/components/form-error-label/form-error-label.component';
 import { ProductService } from '../../../../products/services/product.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'product-details',
@@ -18,6 +19,7 @@ import { ProductService } from '../../../../products/services/product.service';
 export class ProductDetailsComponent implements OnInit {
   product = input.required<Product>();
   productService = inject(ProductService);
+  router = inject(Router);
   fb = inject(FormBuilder);
 
   productForm = this.fb.group({
@@ -69,17 +71,24 @@ export class ProductDetailsComponent implements OnInit {
 
     const productLike: Partial<Product> = {
       ...(fromValue as any),
-      tags: fromValue.tags
+      tags:
+        fromValue.tags
           ?.toLocaleLowerCase()
-          .split(',').map( tag => tag.trim()) ?? [],
+          .split(',')
+          .map((tag) => tag.trim()) ?? [],
     };
-    this.productService.updateProduct(this.product().id , productLike).subscribe(
-      producto => {
-        console.log('Producto actualizado!! ');
 
-      }
-    )
-
-
+    if (this.product().id == 'new') {
+      this.productService.createProduct(productLike).subscribe((product) => {
+        console.log(' producto creado ');
+        this.router.navigate(['/admin/products', product.id]);
+      });
+    } else {
+      this.productService
+        .updateProduct(this.product().id, productLike)
+        .subscribe((producto) => {
+          console.log('Producto actualizado!! ');
+        });
+    }
   }
 }
