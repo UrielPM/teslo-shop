@@ -4,21 +4,23 @@ import { environment } from '../../../environments/environment';
 const baseUrl = environment.baseUrl;
 
 @Pipe({
-  name: 'productImage'
+  name: 'productImage',
 })
-
 export class ProductImagePipe implements PipeTransform {
-  transform(value: string | string[]): string {
+  transform(value: null | string | string[]): string {
+    if (value == null) {
+      return './assets/images/no-image.jpg';
+    }
 
-      if( typeof value === 'string'){
-        return `${ baseUrl}/files/product/${value}`
-      }
+    if (typeof value === 'string') {
+      return `${baseUrl}/files/product/${value}`;
+    }
 
-      const image = value.at(0);
+    const image = value.at(0);
 
-      if(!image){
-        return './assets/images/no-image.jpg'
-      }
-        return `${ baseUrl}/files/product/${image}`
+    if (!image) {
+      return './assets/images/no-image.jpg';
+    }
+    return `${baseUrl}/files/product/${image}`;
   }
 }
